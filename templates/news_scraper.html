@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Scraper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            background-image: url({{ url_for('static',filename='bg.gif' ) }});
+            background-size: cover;
+        }
+
+        #logo {
+                margin-top: 50px;
+                text-align: center;  /* Center the logo */
+            }
+            
+        #logo img {
+                max-width: 100%;  /* Ensure the image doesn't exceed its container */
+                height: auto;  /* Maintain the image's aspect ratio */
+            }
+
+            .result-box {
+                margin-top: 50px;
+                padding: 5px;
+                border: 1px solid #ccc;
+                display: none;
+                background-color: white;
+                max-width: calc(100% - 10px); /* 100% width with 10px padding on both sides */
+                width: 800px;
+                margin-left: auto; /* Align left edge */
+                margin-right: auto; /* Align right edge */
+            }
+        
+
+        #main-heading {
+            margin-top: 20px;
+        }
+
+        #content {
+            text-align: center;
+            margin-top: 20px;
+        }
+                #link {
+            border: 1px solid #dfe1e5; /* Google search box border color */
+            border-radius: 24px; /* Rounded corners */
+            padding: 10px; /* Adjust padding as needed */
+            width: 500px; /* Set the width to 500px */
+            font-size: 16px; /* Adjust font size as needed */
+            outline: none; /* Remove the default focus outline */
+            /* display: inline-block; /* Display the search box as an inline block */
+        }
+
+        #fetch-button,
+        #clear-button {
+            background-color: #4285f4; /* Google Search button blue */
+            color: #fff; /* White text */
+            border: 1px solid #4285f4; /* Same color as background */
+            border-radius: 4px; /* Rounded corners */
+            padding: 10px 20px; /* Adjust padding as needed */
+            font-size: 18px; /* Adjust font size as needed */
+            font-weight: bold; /* Make the font bold */
+            cursor: pointer; /* Add cursor pointer on hover */
+            box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28); /* Box shadow for a subtle 3D effect */
+            transition: box-shadow 0.3s ease; /* Add a smooth transition for the box shadow */
+            margin: 10px; /* Add margin between the buttons */
+        }
+
+        #fetch-button:hover,
+        #clear-button:hover {
+            box-shadow: 0 3px 6px rgba(170, 171, 174, 0.798); /* Increase box shadow on hover for depth */
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div id="logo">
+        <!-- Use Jinja templating to include the image URL dynamically -->
+        <img src="{{url_for('static',filename = 'cover_image.svg')}}" alt="Logo" width="500">
+    </div>
+
+    <form action="/fetch" method="post" style="padding-top: 50px; padding-bottom: 20px;" >
+        <input  type="text" id="link" name="link" placeholder="Enter the news link here" required>
+        <div>   
+            <button id="fetch-button" type="submit">Fetch</button>
+            <button id="clear-button" type="button" onclick="clearSearchBox()">Clear</button>
+        </div>
+    </form>
+   
+
+    <div style="margin-top: 50px;"></div> 
+    <div class="result-box" id="result-box" >
+        <h2 id="main-heading">
+            {% if header_description %}
+                <a href="{{ news_url }}" target="_blank">{{ header_description }}</a>
+            {% elif result != 2 %}
+                No header found
+            {% endif %}
+        </h2>
+        <h2>
+            {% if result == 1 %}
+                This News is Real!
+            {% elif result == 0 %}
+                This News seems to be fake!
+            {% endif %}
+        </h2>
+    </div>
+       {% if error %}
+        <div class="error-msg" id="error-msg" style="color: red;">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
+
+    <script>
+        // Show result box when content is available
+        var resultBox = document.getElementById('result-box');
+        if (resultBox.textContent.trim() !== '') {
+            resultBox.style.display = 'block';
+        }
+
+        function clearSearchBox() {
+            document.getElementById('link').value = '';
+            resultBox.style.display = 'none';
+            document.getElementById('error-msg').innerText = ''
+        }
+    </script>
+</body>
+</html>
